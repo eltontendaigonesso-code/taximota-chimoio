@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="pt-MZ">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>TáxiMota Chimoio</title>
+<meta name="description" content="Encontra um mota-táxi ou entregador certificado no teu bairro, em Chimoio.">
+<meta name="theme-color" content="#1F4C3A">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TáxiMota">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --verde:#1F4C3A; --verde-escuro:#12291F; --ocre:#E3A23B; --terra:#8C4A2F;
+    --areia:#EDE6D2; --creme:#FBF8EF; --tinta:#241F18; --vermelho:#B23A2E;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Inter',ui-sans-serif,system-ui;background:var(--areia);color:var(--tinta);}
+  #app{max-width:480px;margin:0 auto;min-height:100vh;position:relative;padding-bottom:130px;}
+  header.topo{background:var(--verde);padding:18px 16px 0;position:sticky;top:0;z-index:10;}
+  .topo-row{display:flex;align-items:center;gap:10px;padding-bottom:14px;}
+  .logo{background:var(--verde-escuro);border-radius:12px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+  .eyebrow{font-size:10px;letter-spacing:1.5px;color:var(--ocre);font-weight:700;}
+  h1.titulo{font-family:'Poppins',sans-serif;font-weight:800;font-size:19px;color:var(--creme);margin:0;line-height:1.15;}
+  .road-divider{height:0;border-bottom:3px dashed var(--ocre);opacity:.55;}
+  main{padding:16px 16px 8px;}
+  .hero{background:var(--verde);border-radius:18px;padding:18px;margin-bottom:16px;}
+  .hero-label{color:var(--ocre);font-weight:700;font-size:12px;letter-spacing:.5px;margin-bottom:6px;text-transform:uppercase;}
+  .hero-text{color:var(--creme);font-size:14.5px;line-height:1.5;margin-bottom:14px;}
+  .btn-ocre{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--ocre);color:var(--verde-escuro);border:none;border-radius:14px;padding:13px 0;font-weight:800;font-size:14.5px;width:100%;cursor:pointer;}
+  .btn-ghost{display:flex;align-items:center;justify-content:center;gap:6px;background:none;border:1px dashed rgba(31,76,58,.5);color:var(--verde);border-radius:12px;padding:12px 0;font-weight:600;font-size:13.5px;width:100%;margin-top:16px;cursor:pointer;}
+  .search-wrap{display:flex;align-items:center;gap:8px;background:#fff;border-radius:14px;padding:10px 14px;margin-bottom:18px;border:1px solid rgba(31,76,58,.13);}
+  .search-wrap input{border:none;outline:none;font-size:15px;flex:1;background:transparent;color:var(--tinta);}
+  .section-label{font-family:'Poppins',sans-serif;font-weight:700;font-size:13px;color:var(--verde-escuro);margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px;}
+  .bairro-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .bairro-card{background:#fff;border:1px solid rgba(31,76,58,.13);border-radius:16px;padding:14px 12px;text-align:left;cursor:pointer;position:relative;}
+  .bairro-card.perto{border:2px solid var(--ocre);background:#FFF8EC;}
+  .bairro-nome{font-weight:700;font-size:14.5px;margin-top:6px;}
+  .bairro-count{font-size:12px;color:var(--verde);margin-top:3px;}
+  .perto-tag{position:absolute;top:8px;right:8px;font-size:9px;font-weight:800;color:var(--verde-escuro);background:var(--ocre);padding:2px 6px;border-radius:6px;}
+  .back-btn{display:flex;align-items:center;gap:4px;background:none;border:none;color:var(--verde);font-weight:600;font-size:14px;padding:0;margin-bottom:14px;cursor:pointer;}
+  .exemplo-banner{background:#FFF3D6;border:1px solid rgba(227,162,59,.4);border-radius:12px;padding:12px;font-size:12.5px;margin-bottom:14px;display:flex;flex-direction:column;gap:8px;}
+  .empty-card{background:#fff;border-radius:14px;padding:18px;font-size:14px;text-align:center;border:1px dashed rgba(31,76,58,.4);}
+  .lista{display:flex;flex-direction:column;gap:12px;}
+  .taxista-card{background:#fff;border-radius:16px;padding:14px;border:1px solid rgba(31,76,58,.09);}
+  .taxista-top{display:flex;justify-content:space-between;align-items:flex-start;}
+  .taxista-nome{font-weight:700;font-size:15.5px;}
+  .taxista-nick{font-weight:400;color:var(--verde);font-size:13.5px;}
+  .tag-exemplo{display:inline-block;font-size:9.5px;font-weight:800;color:var(--vermelho);border:1px solid var(--vermelho);border-radius:6px;padding:1px 5px;margin-top:4px;margin-right:6px;}
+  .tag-cert{display:inline-flex;align-items:center;gap:3px;font-size:10.5px;font-weight:700;color:var(--verde-escuro);background:#DCEFE0;border-radius:6px;padding:2px 6px;margin-top:4px;}
+  .bairro-inline{display:flex;align-items:center;gap:3px;font-size:12px;color:var(--verde);margin-top:4px;}
+  .star-btn{background:none;border:none;cursor:pointer;padding:4px;font-size:20px;line-height:1;}
+  .taxista-preco{font-size:12px;color:var(--terra);margin-top:8px;font-weight:600;}
+  .taxista-btns{display:flex;gap:8px;margin-top:10px;}
+  .btn-ligar,.btn-zap{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;border-radius:10px;padding:10px 0;font-weight:700;font-size:13.5px;text-decoration:none;}
+  .btn-ligar{background:var(--verde);color:#fff;}
+  .btn-zap{background:#25D366;color:#fff;}
+  .alt-numero{font-size:11.5px;color:var(--verde-escuro);opacity:.7;margin-top:8px;}
+  form.formulario{display:flex;flex-direction:column;gap:12px;}
+  .form-intro{font-size:13.5px;color:var(--verde-escuro);margin-bottom:4px;line-height:1.4;}
+  label.campo{display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:700;color:var(--verde-escuro);}
+  input,select{border:1px solid rgba(31,76,58,.2);border-radius:10px;padding:11px 12px;font-size:14.5px;color:var(--tinta);background:#fff;outline:none;font-family:inherit;}
+  .check-row{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--verde-escuro);line-height:1.4;}
+  .err-text{display:flex;align-items:center;gap:6px;color:var(--vermelho);font-size:12.5px;margin-top:8px;font-weight:600;}
+  .offline-note{font-size:12.5px;opacity:.75;margin-bottom:12px;line-height:1.4;}
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px;}
+  .modal-card{background:#fff;border-radius:18px;padding:18px;width:100%;max-width:360px;}
+  .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+  .modal-title{font-family:'Poppins',sans-serif;font-weight:800;font-size:16px;}
+  .icon-btn{background:none;border:none;cursor:pointer;font-size:18px;}
+  .btn-mini{display:inline-flex;align-items:center;gap:4px;background:none;border:1px solid var(--vermelho);color:var(--vermelho);border-radius:8px;padding:5px 9px;font-size:12px;font-weight:700;cursor:pointer;align-self:flex-start;}
+  .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--verde-escuro);color:var(--creme);padding:10px 18px;border-radius:30px;font-size:13px;font-weight:600;z-index:60;max-width:88%;text-align:center;}
+  nav.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--verde-escuro);display:flex;padding:8px 6px;justify-content:space-around;z-index:20;}
+  nav.bottom-nav button{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;padding:4px 6px;color:var(--creme);font-family:inherit;}
+  nav.bottom-nav button.ativo{color:var(--ocre);}
+  nav.bottom-nav .nav-icon{font-size:19px;}
+  nav.bottom-nav .nav-label{font-size:10px;font-weight:700;}
+  .install-banner{background:var(--ocre);color:var(--verde-escuro);padding:10px 14px;border-radius:12px;font-size:12.5px;font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;}
+  .install-banner button{background:var(--verde-escuro);color:var(--creme);border:none;border-radius:8px;padding:6px 10px;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap;}
+  ::placeholder{color:#999;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+// ---------------- dados-base ----------------
+const CENTRO_CHIMOIO = { lat: -19.1164, lng: 33.4833 };
+
+const BAIRROS_SEED = [
+  { id: "centro", nome: "Centro / Baixa", lat: -19.1164, lng: 33.4833 },
+  { id: "sete-de-abril", nome: "7 de Abril", lat: -19.1050, lng: 33.4700 },
+  { id: "nhamadjessa", nome: "Nhamadjessa", lat: -19.1300, lng: 33.5000 },
+  { id: "soalpo", nome: "Soalpo", lat: -19.0950, lng: 33.4600 },
+  { id: "chissui", nome: "Chissui", lat: -19.1400, lng: 33.5100 },
+  { id: "josina-machel", nome: "Josina Machel", lat: -19.1250, lng: 33.4750 },
+];
+
+const TAXISTAS_SEED = [
+  { id: "ex1", nome: "Carlos Mate", nickname: "Kalu", telefone: "+258821234567", whatsapp: "+258821234567", alternativo: "", bairroId: "centro", certificado: true, exemplo: true },
+  { id: "ex2", nome: "Ivo Machava", nickname: "Vovô", telefone: "+258847654321", whatsapp: "+258847654321", alternativo: "", bairroId: "centro", certificado: false, exemplo: true },
+  { id: "ex3", nome: "Tomás Sabão", nickname: "Sabão", telefone: "+258871112233", whatsapp: "+258871112233", alternativo: "", bairroId: "sete-de-abril", certificado: false, exemplo: true },
+  { id: "ex4", nome: "Fernando Chissano", nickname: "Fefe", telefone: "+258861119988", whatsapp: "+258861119988", alternativo: "+258871119988", bairroId: "soalpo", certificado: true, exemplo: true },
+];
+
+// ---------------- armazenamento local (funciona offline) ----------------
+const DB = {
+  get(chave, padrao) {
+    try { const v = localStorage.getItem(chave); return v ? JSON.parse(v) : padrao; }
+    catch { return padrao; }
+  },
+  set(chave, valor) {
+    try { localStorage.setItem(chave, JSON.stringify(valor)); return true; }
+    catch { return false; }
+  }
+};
+
+let state = {
+  view: "home",
+  bairros: DB.get("tm_bairros", null) || BAIRROS_SEED,
+  taxistas: DB.get("tm_taxistas", null) || TAXISTAS_SEED,
+  favoritos: DB.get("tm_favoritos", []),
+  perfil: DB.get("tm_perfil", { nome: "", telefone: "", password: "" }),
+  search: "",
+  selectedBairroId: null,
+  nearestId: null,
+  locating: false,
+  locError: "",
+  toast: null,
+  showAddBairro: false,
+  deferredInstallPrompt: null,
+  showInstallBanner: false,
+};
+if (!DB.get("tm_bairros", null)) DB.set("tm_bairros", state.bairros);
+if (!DB.get("tm_taxistas", null)) DB.set("tm_taxistas", state.taxistas);
+
+function persistTaxistas(next){ state.taxistas = next; DB.set("tm_taxistas", next); }
+function persistBairros(next){ state.bairros = next; DB.set("tm_bairros", next); }
+function persistFavoritos(next){ state.favoritos = next; DB.set("tm_favoritos", next); }
+function persistPerfil(next){ state.perfil = next; DB.set("tm_perfil", next); }
+
+function showToast(msg){
+  state.toast = msg; render();
+  setTimeout(() => { state.toast = null; render(); }, 2600);
+}
+
+// ---------------- utilidades ----------------
+function slugify(str){
+  return str.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
+}
+function haversineKm(lat1,lng1,lat2,lng2){
+  const R=6371, dLat=(lat2-lat1)*Math.PI/180, dLng=(lng2-lng1)*Math.PI/180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+function waLink(numero){ return "https://wa.me/" + numero.replace(/[^0-9]/g,""); }
+function esc(s){ return (s||"").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function taxistasDoBairro(bairroId){ return state.taxistas.filter(t => t.bairroId === bairroId); }
+function nomeDoBairro(id){ const b = state.bairros.find(b=>b.id===id); return b ? b.nome : ""; }
+
+// ---------------- localização ----------------
+function localizarMaisProximo(){
+  state.locError = "";
+  if (!navigator.geolocation){ state.locError = "Este dispositivo não permite localização automática."; render(); return; }
+  state.locating = true; render();
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const { latitude, longitude } = pos.coords;
+      let melhor=null, melhorDist=Infinity;
+      state.bairros.forEach(b=>{
+        const d = haversineKm(latitude, longitude, b.lat, b.lng);
+        if (d < melhorDist){ melhorDist = d; melhor = b; }
+      });
+      state.locating = false;
+      if (melhor){
+        state.nearestId = melhor.id;
+        state.selectedBairroId = melhor.id;
+        state.view = "bairro";
+        render();
+        showToast("Bairro mais próximo: " + melhor.nome);
+      } else render();
+    },
+    () => { state.locating = false; state.locError = "Não foi possível obter a tua localização. Verifica as permissões do telemóvel."; render(); },
+    { enableHighAccuracy: true, timeout: 8000 }
+  );
+}
+
+function toggleFavorito(id){
+  const jaTem = state.favoritos.includes(id);
+  persistFavoritos(jaTem ? state.favoritos.filter(f=>f!==id) : [...state.favoritos, id]);
+  showToast(jaTem ? "Removido dos guardados" : "Guardado para acesso rápido");
+  render();
+}
+function removerExemplos(){
+  persistTaxistas(state.taxistas.filter(t=>!t.exemplo));
+  showToast("Exemplos removidos");
+  render();
+}
+
+// ---------------- templates ----------------
+function taxistaCardHTML(t){
+  const fav = state.favoritos.includes(t.id);
+  return `
+  <div class="taxista-card">
+    <div class="taxista-top">
+      <div>
+        <div class="taxista-nome">${esc(t.nome)} ${t.nickname ? `<span class="taxista-nick">"${esc(t.nickname)}"</span>` : ""}</div>
+        ${t.exemplo ? `<span class="tag-exemplo">EXEMPLO</span>` : ""}
+        ${t.certificado ? `<span class="tag-cert">🛡️ Delivery certificado</span>` : ""}
+        <div class="bairro-inline">📍 ${esc(nomeDoBairro(t.bairroId))}</div>
+      </div>
+      <button class="star-btn" data-fav="${t.id}">${fav ? "⭐" : "☆"}</button>
+    </div>
+    <div class="taxista-preco">A partir de 50 MZN · preço negociável</div>
+    <div class="taxista-btns">
+      <a class="btn-ligar" href="tel:${esc(t.telefone)}">📞 Ligar</a>
+      <a class="btn-zap" href="${waLink(t.whatsapp || t.telefone)}" target="_blank" rel="noreferrer">💬 WhatsApp</a>
+    </div>
+    ${t.alternativo ? `<div class="alt-numero">Nº alternativo: ${esc(t.alternativo)}</div>` : ""}
+  </div>`;
+}
+
+function headerHTML(){
+  const titulos = {
+    home: "Encontra um mota-táxi", bairro: state.selectedBairroId ? nomeDoBairro(state.selectedBairroId) : "Bairro",
+    delivery: "Delivery certificado", registerTaxista: "Inscrição de taxista", perfil: "O teu perfil",
+  };
+  return `
+  <header class="topo">
+    <div class="topo-row">
+      <div class="logo">🏍️</div>
+      <div>
+        <div class="eyebrow">TÁXI-MOTA CHIMOIO</div>
+        <h1 class="titulo">${titulos[state.view] || "TáxiMota"}</h1>
+      </div>
+    </div>
+    <div class="road-divider"></div>
+  </header>`;
+}
+
+function homeHTML(){
+  const q = state.search.toLowerCase();
+  const lista = state.bairros.filter(b => b.nome.toLowerCase().includes(q));
+  return `
+  ${state.showInstallBanner ? `
+  <div class="install-banner">
+    <span>Instala o TáxiMota no teu telemóvel para abrir mais rápido.</span>
+    <button id="btn-instalar">Instalar</button>
+  </div>` : ""}
+  <div class="hero">
+    <div class="hero-label">50 MZN por corrida (a partir de)</div>
+    <div class="hero-text">Diz-nos o teu bairro e mostramos os taxistas mais próximos — com número, WhatsApp e preço combinável.</div>
+    <button class="btn-ocre" id="btn-localizar" ${state.locating ? "disabled" : ""}>${state.locating ? "⏳ A localizar…" : "🧭 Encontrar o mais próximo de mim"}</button>
+    ${state.locError ? `<div class="err-text">⚠️ ${esc(state.locError)}</div>` : ""}
+  </div>
+  <div class="search-wrap">
+    🔍 <input id="input-search" placeholder="Procurar bairro (ex: Soalpo)" value="${esc(state.search)}">
+  </div>
+  <div class="section-label">Bairros</div>
+  <div class="bairro-grid">
+    ${lista.map(b=>{
+      const n = taxistasDoBairro(b.id).length;
+      const perto = b.id === state.nearestId;
+      return `<button class="bairro-card ${perto?"perto":""}" data-bairro="${b.id}">
+        📍 <div class="bairro-nome">${esc(b.nome)}</div>
+        <div class="bairro-count">${n} ${n===1?"taxista":"taxistas"}</div>
+        ${perto ? `<div class="perto-tag">MAIS PRÓXIMO</div>` : ""}
+      </button>`;
+    }).join("") || `<div style="grid-column:1/-1;opacity:.7;font-size:14px;">Nenhum bairro encontrado com esse nome.</div>`}
+  </div>
+  <button class="btn-ghost" id="btn-add-bairro">➕ Não encontras o teu bairro? Adiciona aqui</button>
+  `;
+}
+
+function bairroHTML(){
+  const bairro = state.bairros.find(b=>b.id===state.selectedBairroId);
+  if (!bairro) return `<div class="empty-card">Bairro não encontrado.</div>`;
+  const lista = taxistasDoBairro(bairro.id);
+  const temExemplos = lista.some(t=>t.exemplo);
+  return `
+  <button class="back-btn" id="btn-voltar">‹ Todos os bairros</button>
+  <div class="section-label">${lista.length} taxista(s) em ${esc(bairro.nome)}</div>
+  ${temExemplos ? `
+  <div class="exemplo-banner">
+    Estes contactos marcados "EXEMPLO" são fictícios, só para mostrar como o aplicativo funciona.
+    <button class="btn-mini" id="btn-remover-exemplos">🗑️ Remover exemplos</button>
+  </div>` : ""}
+  ${lista.length===0 ? `<div class="empty-card">Ainda não há taxistas registados neste bairro. Sê o primeiro a inscrever-te em "Sou taxista", em baixo.</div>` : ""}
+  <div class="lista">${lista.map(taxistaCardHTML).join("")}</div>
+  `;
+}
+
+function deliveryHTML(){
+  const lista = state.taxistas.filter(t=>t.certificado);
+  return `
+  <div class="hero">
+    <div class="hero-label">Entregas com garantia</div>
+    <div class="hero-text">Estes taxistas foram recomendados pelo aplicativo especificamente para entregas (delivery). Qualquer taxista pode fazer entregas informalmente, mas só estes aparecem aqui como certificados.</div>
+  </div>
+  ${lista.length===0 ? `<div class="empty-card">Ainda não há entregadores certificados. Volta em breve.</div>` : ""}
+  <div class="lista">${lista.map(taxistaCardHTML).join("")}</div>
+  `;
+}
+
+function registerTaxistaHTML(){
+  return `
+  <form class="formulario" id="form-taxista">
+    <div class="form-intro">Preenche os teus dados para o teu número aparecer no aplicativo para clientes do teu bairro.</div>
+    <label class="campo">Nome completo *<input name="nome" placeholder="Ex: Carlos Mate"></label>
+    <label class="campo">Nickname / alcunha<input name="nickname" placeholder="Ex: Kalu"></label>
+    <label class="campo">Contacto (chamadas) *<input name="telefone" placeholder="+258 8X XXX XXXX"></label>
+    <label class="campo">WhatsApp<input name="whatsapp" placeholder="+258 8X XXX XXXX"></label>
+    <label class="campo">Número alternativo<input name="alternativo" placeholder="Opcional"></label>
+    <label class="campo">Bairro *
+      <select name="bairroId">${state.bairros.map(b=>`<option value="${b.id}">${esc(b.nome)}</option>`).join("")}</select>
+    </label>
+    <label class="check-row"><input type="checkbox" name="certificado"> Quero pedir para ser recomendado como delivery certificado (sujeito a verificação)</label>
+    <div id="erro-taxista"></div>
+    <button class="btn-ocre" type="submit" style="margin-bottom:30px;">➕ Inscrever-me</button>
+  </form>`;
+}
+
+function perfilHTML(){
+  const guardados = state.taxistas.filter(t=>state.favoritos.includes(t.id));
+  const p = state.perfil;
+  return `
+  <div class="section-label">Contactos guardados (acesso rápido)</div>
+  <div class="offline-note">Estes ficam guardados neste telemóvel, mesmo sem internet — porque o TáxiMota já está instalado como app.</div>
+  ${guardados.length===0 ? `<div class="empty-card">Ainda não guardaste nenhum taxista. Toca na estrela ⭐ num contacto para guardar.</div>` : ""}
+  <div class="lista">${guardados.map(taxistaCardHTML).join("")}</div>
+
+  <div class="section-label" style="margin-top:22px;">O meu cadastro</div>
+  <form class="formulario" id="form-perfil">
+    <label class="campo">Nome<input name="nome" value="${esc(p.nome)}"></label>
+    <label class="campo">Número de telemóvel<input name="telefone" value="${esc(p.telefone)}"></label>
+    <label class="campo">Password<input type="password" name="password" value="${esc(p.password)}"></label>
+    <button class="btn-ocre" type="submit">✅ Guardar perfil</button>
+  </form>`;
+}
+
+function bottomNavHTML(){
+  const itens = [
+    { id:"home", label:"Início", icon:"🏠" },
+    { id:"delivery", label:"Delivery", icon:"📦" },
+    { id:"registerTaxista", label:"Sou taxista", icon:"🏍️" },
+    { id:"perfil", label:"Perfil", icon:"👤" },
+  ];
+  return `<nav class="bottom-nav">${itens.map(i=>`
+    <button class="${state.view===i.id?"ativo":""}" data-nav="${i.id}">
+      <span class="nav-icon">${i.icon}</span><span class="nav-label">${i.label}</span>
+    </button>`).join("")}</nav>`;
+}
+
+function modalAddBairroHTML(){
+  if (!state.showAddBairro) return "";
+  return `
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-title">Adicionar bairro</div>
+        <button class="icon-btn" id="btn-fechar-modal">✕</button>
+      </div>
+      <input id="input-novo-bairro" placeholder="Nome do bairro" autofocus>
+      <button class="btn-ocre" id="btn-confirmar-bairro" style="margin-top:10px;">➕ Adicionar</button>
+    </div>
+  </div>`;
+}
+
+// ---------------- render principal ----------------
+function render(){
+  const app = document.getElementById("app");
+  const views = { home: homeHTML, bairro: bairroHTML, delivery: deliveryHTML, registerTaxista: registerTaxistaHTML, perfil: perfilHTML };
+  app.innerHTML = `
+    ${headerHTML()}
+    <main>${views[state.view]()}</main>
+    ${modalAddBairroHTML()}
+    ${state.toast ? `<div class="toast">${esc(state.toast)}</div>` : ""}
+    ${bottomNavHTML()}
+  `;
+  attachEvents();
+}
+
+function attachEvents(){
+  const app = document.getElementById("app");
+
+  app.querySelectorAll("[data-nav]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{ state.view = btn.dataset.nav; render(); });
+  });
+
+  const btnLocalizar = document.getElementById("btn-localizar");
+  if (btnLocalizar) btnLocalizar.addEventListener("click", localizarMaisProximo);
+
+  const inputSearch = document.getElementById("input-search");
+  if (inputSearch) {
+    inputSearch.addEventListener("input", (e)=>{ state.search = e.target.value; render();
+      document.getElementById("input-search").focus();
+      document.getElementById("input-search").selectionStart = document.getElementById("input-search").value.length;
+    });
+  }
+
+  app.querySelectorAll("[data-bairro]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{ state.selectedBairroId = btn.dataset.bairro; state.view = "bairro"; render(); });
+  });
+
+  const btnVoltar = document.getElementById("btn-voltar");
+  if (btnVoltar) btnVoltar.addEventListener("click", ()=>{ state.view = "home"; render(); });
+
+  const btnRemoverExemplos = document.getElementById("btn-remover-exemplos");
+  if (btnRemoverExemplos) btnRemoverExemplos.addEventListener("click", removerExemplos);
+
+  app.querySelectorAll("[data-fav]").forEach(btn=>{
+    btn.addEventListener("click", ()=> toggleFavorito(btn.dataset.fav));
+  });
+
+  const btnAddBairro = document.getElementById("btn-add-bairro");
+  if (btnAddBairro) btnAddBairro.addEventListener("click", ()=>{ state.showAddBairro = true; render(); });
+
+  const modalOverlay = document.getElementById("modal-overlay");
+  if (modalOverlay) modalOverlay.addEventListener("click", ()=>{ state.showAddBairro = false; render(); });
+  const btnFecharModal = document.getElementById("btn-fechar-modal");
+  if (btnFecharModal) btnFecharModal.addEventListener("click", ()=>{ state.showAddBairro = false; render(); });
+  const btnConfirmarBairro = document.getElementById("btn-confirmar-bairro");
+  if (btnConfirmarBairro) btnConfirmarBairro.addEventListener("click", ()=>{
+    const nome = document.getElementById("input-novo-bairro").value.trim();
+    if (!nome) return;
+    const id = slugify(nome);
+    if (state.bairros.some(b=>b.id===id)){ showToast("Esse bairro já existe."); return; }
+    persistBairros([...state.bairros, { id, nome, lat: CENTRO_CHIMOIO.lat, lng: CENTRO_CHIMOIO.lng }]);
+    state.showAddBairro = false;
+    render();
+    showToast("Bairro adicionado. Actualiza as coordenadas depois, se possível.");
+  });
+
+  const formTaxista = document.getElementById("form-taxista");
+  if (formTaxista) formTaxista.addEventListener("submit", (e)=>{
+    e.preventDefault();
+    const fd = new FormData(formTaxista);
+    const dados = {
+      nome: fd.get("nome").trim(), nickname: fd.get("nickname").trim(),
+      telefone: fd.get("telefone").trim(), whatsapp: fd.get("whatsapp").trim(),
+      alternativo: fd.get("alternativo").trim(), bairroId: fd.get("bairroId"),
+      certificado: fd.get("certificado") === "on",
+    };
+    if (!dados.nome || !dados.telefone || !dados.bairroId){
+      document.getElementById("erro-taxista").innerHTML = `<div class="err-text">⚠️ Preenche pelo menos o nome, o contacto e o bairro.</div>`;
+      return;
+    }
+    dados.id = "t-" + Date.now();
+    persistTaxistas([...state.taxistas, dados]);
+    state.view = "home";
+    render();
+    showToast("Inscrição feita! O teu contacto já está no aplicativo.");
+  });
+
+  const formPerfil = document.getElementById("form-perfil");
+  if (formPerfil) formPerfil.addEventListener("submit", (e)=>{
+    e.preventDefault();
+    const fd = new FormData(formPerfil);
+    persistPerfil({ nome: fd.get("nome"), telefone: fd.get("telefone"), password: fd.get("password") });
+    showToast("Perfil guardado");
+  });
+
+  const btnInstalar = document.getElementById("btn-instalar");
+  if (btnInstalar) btnInstalar.addEventListener("click", async ()=>{
+    if (!state.deferredInstallPrompt) return;
+    state.deferredInstallPrompt.prompt();
+    await state.deferredInstallPrompt.userChoice;
+    state.deferredInstallPrompt = null;
+    state.showInstallBanner = false;
+    render();
+  });
+}
+
+// ---------------- instalação (PWA) ----------------
+window.addEventListener("beforeinstallprompt", (e)=>{
+  e.preventDefault();
+  state.deferredInstallPrompt = e;
+  state.showInstallBanner = true;
+  render();
+});
+window.addEventListener("appinstalled", ()=>{
+  state.showInstallBanner = false;
+  showToast("App instalado com sucesso!");
+});
+
+// ---------------- service worker (offline) ----------------
+if ("serviceWorker" in navigator){
+  window.addEventListener("load", ()=>{
+    navigator.serviceWorker.register("./service-worker.js").catch(()=>{});
+  });
+}
+
+render();
+</script>
+</body>
+</html>
