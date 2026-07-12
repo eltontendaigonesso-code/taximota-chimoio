@@ -1,6 +1,6 @@
 // Service Worker do TáxiMota Chimoio
 // Guarda o "esqueleto" do app no telemóvel para funcionar sem internet.
-const CACHE_NAME = "taximota-chimoio-v10";
+const CACHE_NAME = "taximota-chimoio-v11";
 const ARQUIVOS_ESSENCIAIS = [
   "./",
   "./index.html",
